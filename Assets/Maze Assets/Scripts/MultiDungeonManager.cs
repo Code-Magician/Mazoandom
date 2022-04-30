@@ -10,7 +10,8 @@ public class MultiDungeonManager : MonoBehaviour
     [SerializeField] GameObject maze;
     [SerializeField] GameObject path;
     [SerializeField] GameObject FPC;
-    [SerializeField] int totalLevels = 3;
+    [SerializeField] GameObject FinsihLine;
+    public int totalLevels = 3;
 
 
     [Header("Single Maze Properties")]
@@ -31,11 +32,11 @@ public class MultiDungeonManager : MonoBehaviour
 
     private void Start()
     {
-        Build();
+
     }
 
 
-    void Build()
+    public void Build()
     {
         int level = 0;
         dungeons = new Maze[totalLevels];
@@ -69,6 +70,7 @@ public class MultiDungeonManager : MonoBehaviour
 
     void PlaceFPC()
     {
+        // Place FPC
         bool placed = false;
         Maze m = dungeons[0];
         for (int z = 0; z < m.lenZ; z++)
@@ -87,6 +89,30 @@ public class MultiDungeonManager : MonoBehaviour
             if (placed)
                 break;
         }
+
+
+        // Set FinishLine
+        placed = false;
+        m = dungeons[totalLevels - 1];
+        for (int z = 0; z < m.lenZ; z++)
+        {
+            for (int x = 0; x < m.lenX; x++)
+            {
+                if (m.piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Down || m.piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Up ||
+                m.piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Left || m.piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Right)
+                {
+                    Debug.Log("Finished");
+                    FinsihLine.transform.position = m.piecePlaces[x, z].model.transform.position;
+                    FinsihLine.transform.rotation = m.piecePlaces[x, z].model.transform.rotation;
+                    placed = true;
+                    break;
+                }
+            }
+            if (placed)
+                break;
+        }
+
+        FPC.SetActive(true);
     }
 
 

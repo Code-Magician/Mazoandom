@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameController : MonoBehaviour
+public class PersistingScript : MonoBehaviour
 {
-    public static GameController Instance
+    public static PersistingScript Instance
     {
         get;
         set;

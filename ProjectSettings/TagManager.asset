@@ -7,7 +7,7 @@ TagManager:
   - Teleport
   - Ammo
   - Med
-  - Deadend
+  - FinishLine
   layers:
   - Default
   - TransparentFX

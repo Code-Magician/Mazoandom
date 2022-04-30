@@ -53,7 +53,7 @@ public class AStarPathFinding : MonoBehaviour
     PathMarker weAreAt;
     PathMarker lastPos;
     bool done = false;
-    bool started = false;
+    // bool started = false;
 
 
     public void Build()

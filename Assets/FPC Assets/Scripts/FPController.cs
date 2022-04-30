@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class FPController : MonoBehaviour
 {
     [Header("Properties")]
     [SerializeField] float movementSpeed = 10f;
-    [SerializeField] float sprintSpeed = 20f;
+    // [SerializeField] float sprintSpeed = 20f;
     [SerializeField] float jumpForce = 300f;
     [Range(0, 10)][SerializeField] float sensitivity = 1f;
 
@@ -24,6 +25,7 @@ public class FPController : MonoBehaviour
     [SerializeField] AudioSource outOfAmmo;
     [SerializeField] AudioSource dealth;
     [SerializeField] AudioSource reload;
+    [SerializeField] LevelController levelController;
 
 
     [Header("UI References")]
@@ -31,6 +33,8 @@ public class FPController : MonoBehaviour
     [SerializeField] TMP_Text ammunationText;
     [SerializeField] TMP_Text ammoClipText;
     [SerializeField] TMP_Text healthText;
+    [SerializeField] GameObject LevelCompleteMenu;
+    [SerializeField] GameObject WaitMenu;
 
 
 
@@ -42,6 +46,8 @@ public class FPController : MonoBehaviour
     bool isDead = false;
     bool playingWalking = false;
     bool previouslyGrounded = true;
+    public MapLocation finishLine;
+    GameObject temp;
 
 
     // Inventory
@@ -67,9 +73,7 @@ public class FPController : MonoBehaviour
         camRotation = fpsCamera.transform.localRotation;
         fpsRotation = this.transform.localRotation;
 
-        health = maxHealth;
-        ammoClip = maxAmmoClip;
-        ammo = maxAmmo;
+
         RefreshDisplay();
     }
 
@@ -245,7 +249,7 @@ public class FPController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Finishline")
+        if (other.gameObject.tag == "FinishLine")
         {
             GameoverWith("Dance");
         }
@@ -370,9 +374,15 @@ public class FPController : MonoBehaviour
 
     private void GameoverWith(string action)
     {
-        Vector3 pos = new Vector3(transform.position.x, Terrain.activeTerrain.SampleHeight(transform.position), transform.position.z);
-        GameObject fullBody = Instantiate(fullBodyModel, pos, transform.rotation);
-        fullBody.GetComponent<Animator>().SetTrigger(action);
+        if (action == "Dance")
+        {
+            LevelCompleteMenu.SetActive(true);
+            CancelInvoke("RandomFootsteps");
+        }
+
+        Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        temp = Instantiate(fullBodyModel, pos, transform.rotation);
+        temp.GetComponent<Animator>().SetTrigger(action);
 
         LockCursor(false);
 
@@ -380,7 +390,7 @@ public class FPController : MonoBehaviour
 
         aim.SetActive(false);
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
 
@@ -389,5 +399,34 @@ public class FPController : MonoBehaviour
         healthText.text = "Health : " + health;
         ammoClipText.text = "AmmoClip : " + ammoClip;
         ammunationText.text = "Ammunation : " + ammo;
+    }
+
+    private void ResetHealthAndAmmo()
+    {
+        health = maxHealth;
+        ammoClip = maxAmmoClip;
+        ammo = maxAmmo;
+        RefreshDisplay();
+    }
+
+    public void NextLevel()
+    {
+        levelController.MoveToNextLevel();
+        WaitMenu.SetActive(true);
+        ResetHealthAndAmmo();
+        Destroy(temp);
+        Invoke("WaitUI", Random.Range(2f, 3f));
+        LevelCompleteMenu.SetActive(false);
+    }
+
+    public void MainMenu()
+    {
+        LevelCompleteMenu.SetActive(false);
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    private void WaitUI()
+    {
+        WaitMenu.SetActive(false);
     }
 }
