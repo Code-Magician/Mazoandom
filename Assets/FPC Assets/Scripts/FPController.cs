@@ -35,6 +35,7 @@ public class FPController : MonoBehaviour
     [SerializeField] TMP_Text healthText;
     [SerializeField] GameObject LevelCompleteMenu;
     [SerializeField] GameObject WaitMenu;
+    [SerializeField] TMP_Text zombiesLeftText;
 
 
 
@@ -48,13 +49,14 @@ public class FPController : MonoBehaviour
     bool previouslyGrounded = true;
     public MapLocation finishLine;
     GameObject temp;
+    bool canShoot = true;
 
 
     // Inventory
-    int ammo = 50;
-    int maxAmmo = 50;
-    int ammoClip = 5;
-    int maxAmmoClip = 5;
+    int ammo = 100;
+    int maxAmmo = 100;
+    int ammoClip = 10;
+    int maxAmmoClip = 10;
     int health = 100;
     int maxHealth = 100;
 
@@ -115,10 +117,12 @@ public class FPController : MonoBehaviour
         {
             if (ammoClip > 0)
             {
-                anim.SetTrigger("Fire");
-                ammoClip--;
-                RefreshDisplay();
-                Shoot();
+                if (canShoot)
+                {
+                    canShoot = false;
+                    anim.SetTrigger("Fire");
+                    Shoot();
+                }
             }
             else
             {
@@ -217,6 +221,7 @@ public class FPController : MonoBehaviour
             ammokitAudio.Play();
             Debug.Log("Ammo: " + ammo);
             Destroy(other.gameObject);
+            RefreshDisplay();
         }
         else if (other.gameObject.tag == "Med" && health < maxHealth)
         {
@@ -224,6 +229,7 @@ public class FPController : MonoBehaviour
             medkitAudio.Play();
             Debug.Log("Health: " + health);
             Destroy(other.gameObject);
+            RefreshDisplay();
         }
         else if (other.gameObject.tag == "Danger")
         {
@@ -307,6 +313,7 @@ public class FPController : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape) && cursorIsLocked)
         {
+            SceneManager.LoadScene("MainMenu");
             LockCursor(false);
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0) && !cursorIsLocked)
@@ -347,17 +354,26 @@ public class FPController : MonoBehaviour
 
     private void Shoot()
     {
+        Invoke("ToggleCanShoot", 1.1f);
+        ammoClip--;
+        RefreshDisplay();
         RaycastHit hitInfo;
         if (Physics.Raycast(fpsCamera.gameObject.transform.position, fpsCamera.gameObject.transform.forward, out hitInfo, 200))
         {
             GameObject shotObj = hitInfo.collider.gameObject;
             if (shotObj.tag == "Zombie")
             {
-                // shotObj.GetComponent<ZombieController>().KillSelf();
+                zombiesLeftText.text = "Zombies Left : " + Mathf.Max(0, --GameStats.totalZombiesInCurrentLevel);
+                shotObj.GetComponent<ZombieController2>().KillSelf();
             }
         }
     }
 
+
+    private void ToggleCanShoot()
+    {
+        canShoot = true;
+    }
 
     public void TakeDamage(float damageAmount)
     {

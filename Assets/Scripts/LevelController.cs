@@ -23,6 +23,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] TMP_Text currFloorText;
     [SerializeField] TMP_Text goalFloorText;
     [SerializeField] TMP_Text levelText;
+    [SerializeField] TMP_Text zombiesLeftText;
 
 
     private void Awake()
@@ -41,6 +42,8 @@ public class LevelController : MonoBehaviour
         multiDungeonManager.width = Mathf.Min(width, maxwidth);
         multiDungeonManager.depth = Mathf.Min(depth, maxdepth);
         multiDungeonManager.Build();
+
+        zombiesLeftText.text = "Zombies Left : " + GameStats.totalZombiesInCurrentLevel;
     }
 
     private void Reset()
@@ -49,6 +52,8 @@ public class LevelController : MonoBehaviour
         {
             Destroy(multiDungeonManager.transform.GetChild(i).gameObject);
         }
+        GameStats.totalZombiesInCurrentLevel = 0;
+        GameStats.gameOver = false;
     }
 
     public void MoveToNextLevel()
@@ -70,12 +75,13 @@ public class LevelController : MonoBehaviour
             floors = Mathf.Clamp(floors + 1, 3, maxFloors);
         }
 
+        CancelInvoke("RefreshCurrFloor");
+        InvokeRepeating("RefreshCurrFloor", 0, 2f);
         BuildLevel();
+
     }
 
-
-
-    private void Update()
+    private void RefreshCurrFloor()
     {
         RaycastHit hit;
         Ray ray = new Ray(this.transform.position, -Vector3.up);
@@ -85,7 +91,8 @@ public class LevelController : MonoBehaviour
             if (obj != null)
             {
                 Maze m = obj.GetComponentInParent<Maze>();
-                currFloorText.text = "Current Floor : " + (m.level + 1);
+                if (m != null)
+                    currFloorText.text = "Current Floor : " + (m.level + 1);
             }
         }
     }

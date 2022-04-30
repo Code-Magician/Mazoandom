@@ -646,10 +646,13 @@ public class Maze : MonoBehaviour
             }
         }
 
-        PlaceObjects placeObjs = GetComponent<PlaceObjects>();
-        if (placeObjs != null)
+        PlaceObjects[] placeObjs = GetComponents<PlaceObjects>();
+        foreach (PlaceObjects x in placeObjs)
         {
-            placeObjs.Place();
+            if (x != null)
+            {
+                x.Place();
+            }
         }
 
 

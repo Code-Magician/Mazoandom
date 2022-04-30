@@ -11,6 +11,7 @@ public class MultiDungeonManager : MonoBehaviour
     [SerializeField] GameObject path;
     [SerializeField] GameObject FPC;
     [SerializeField] GameObject FinsihLine;
+
     public int totalLevels = 3;
 
 

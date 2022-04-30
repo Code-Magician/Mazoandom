@@ -17,7 +17,7 @@ public class FindPath : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.Mouse2))
         {
             if (aStar != null)
             {
