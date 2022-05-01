@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[SerializeField]
 public class MapLocation
 {
     public int x;
@@ -431,10 +432,10 @@ public class Maze : MonoBehaviour
                     temp = Instantiate(floorPiece.prefab, pos, Quaternion.Euler(floorPiece.rotation), this.transform);
                     temp.name = "Floor";
                     piecePlaces[x, z].piece = PieceType.Room;
-                    piecePlaces[x, z].model = temp;
 
                     temp = Instantiate(ceilingPiece.prefab, pos, Quaternion.Euler(ceilingPiece.rotation), this.transform);
                     temp.name = "Ceiling";
+                    piecePlaces[x, z].model = temp;
 
                     LocateWalls(x, z);
 
@@ -873,15 +874,21 @@ public class Maze : MonoBehaviour
         {
             aStar.Build();
 
-            if (aStar.start.location.x < aStar.goal.location.z)
+            if (aStar.start.location.x < aStar.goal.location.x)
             {
                 xPos = aStar.start.location.x;
                 zPos = aStar.start.location.z;
 
-                while (xPos > 1)
+                while (xPos > 0)
                 {
                     map[xPos, zPos] = 0;
                     xPos--;
+                }
+                xPos = aStar.start.location.x;
+                while (zPos > 0)
+                {
+                    map[xPos, zPos] = 0;
+                    zPos--;
                 }
 
 
@@ -892,6 +899,12 @@ public class Maze : MonoBehaviour
                 {
                     map[xPos, zPos] = 0;
                     xPos++;
+                }
+                xPos = aStar.goal.location.x;
+                while (zPos < lenZ - 1)
+                {
+                    map[xPos, zPos] = 0;
+                    zPos++;
                 }
             }
             else
@@ -904,6 +917,12 @@ public class Maze : MonoBehaviour
                     map[xPos, zPos] = 0;
                     xPos++;
                 }
+                xPos = aStar.start.location.x;
+                while (zPos < lenZ - 1)
+                {
+                    map[xPos, zPos] = 0;
+                    zPos++;
+                }
 
 
                 xPos = aStar.goal.location.x;
@@ -914,44 +933,75 @@ public class Maze : MonoBehaviour
                     map[xPos, zPos] = 0;
                     xPos--;
                 }
+                xPos = aStar.goal.location.x;
+                while (zPos > 1)
+                {
+                    map[xPos, zPos] = 0;
+                    zPos--;
+                }
             }
         }
         else
         {
+            List<int> temp = new List<int>();
             // Upper DeadEnd...
-            xPos = Random.Range(5, lenX - 5);
-            zPos = lenZ - 2;
-            while (map[xPos, zPos] == 0 && zPos > 1)
+            zPos = 4;
+            for (int x = 4; x <= lenX - 5; x++)
+            {
+                if (map[x, zPos] != 1)
+                    temp.Add(x);
+            }
+            xPos = temp[Random.Range(0, temp.Count)];
+            while (zPos >= 1)
             {
                 map[xPos, zPos] = 0;
                 zPos--;
             }
 
+
             // Lower DeadEnd...
-            xPos = Random.Range(5, lenX - 5);
-            zPos = 1;
-            while (map[xPos, zPos] == 0 && zPos < lenZ - 1)
+            temp.Clear();
+            zPos = lenZ - 5;
+            for (int x = 4; x <= lenX - 5; x++)
+            {
+                if (map[x, zPos] != 1)
+                    temp.Add(x);
+            }
+            xPos = temp[Random.Range(0, temp.Count)];
+            while (zPos < lenZ - 1)
             {
                 map[xPos, zPos] = 0;
                 zPos++;
             }
 
             // Left DeadEnd...
-            xPos = 1;
-            zPos = Random.Range(5, lenZ - 5);
-            while (map[xPos, zPos] == 0 && xPos < lenX - 1)
+            temp.Clear();
+            xPos = 4;
+            for (int z = 4; z <= lenZ - 5; z++)
             {
-                map[xPos, zPos] = 0;
-                xPos++;
+                if (map[xPos, z] != 1)
+                    temp.Add(z);
             }
-
-            // Right DeadEnd...
-            xPos = lenX - 2;
-            zPos = Random.Range(5, lenZ - 5);
-            while (map[xPos, zPos] == 0 && xPos > 1)
+            zPos = temp[Random.Range(0, temp.Count)];
+            while (xPos >= 1)
             {
                 map[xPos, zPos] = 0;
                 xPos--;
+            }
+
+            // Right DeadEnd...
+            temp.Clear();
+            xPos = lenX - 5;
+            for (int z = 4; z <= lenZ - 5; z++)
+            {
+                if (map[xPos, z] != 1)
+                    temp.Add(z);
+            }
+            zPos = temp[Random.Range(0, temp.Count)];
+            while (xPos < lenX - 1)
+            {
+                map[xPos, zPos] = 0;
+                xPos++;
             }
         }
     }

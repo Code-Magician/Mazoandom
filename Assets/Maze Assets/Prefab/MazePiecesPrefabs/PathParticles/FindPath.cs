@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FindPath : MonoBehaviour
 {
     public GameObject particles;
+
     GameObject magic;
+    [SerializeField] float relapseTime = 100f;
+    [SerializeField] Scrollbar magicPathBar;
+    [SerializeField] Image magicPathHandle;
+    float timePassed = 110;
     Maze thisMaze;
     AStarPathFinding aStar;
     PathMarker destination;
@@ -17,27 +23,68 @@ public class FindPath : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse2))
+        if (timePassed <= relapseTime + 1f)
         {
+            timePassed += Time.deltaTime;
+            magicPathBar.size = (timePassed) / 100;
+        }
+        else
+        {
+            magicPathHandle.color = Color.green;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1) && (timePassed >= relapseTime))
+        {
+
             if (aStar != null)
             {
                 RaycastHit hit;
-                Ray ray = new Ray(this.transform.position, -Vector3.up);
+                Ray ray = new Ray(this.transform.position, Vector3.up);
                 if (Physics.Raycast(ray, out hit))
                 {
-                    thisMaze = hit.collider.gameObject.GetComponentInParent<Maze>();
+                    GameObject hitObj = hit.collider.gameObject;
+                    if (hitObj == null)
+                        return;
+
+                    Debug.Log("Hitted Gameoject : " + hitObj.name);
+                    thisMaze = hitObj.transform.root.gameObject.transform.GetChild(GameStats.currLevel - 1).GetComponent<Maze>();
+                    Debug.Log("Maze is  : " + thisMaze.gameObject);
+                    if (thisMaze == null)
+                        return;
+
                     AStarPathFinding hasAstar = thisMaze.gameObject.GetComponent<AStarPathFinding>();
                     if (hasAstar != null)
                         return;
 
-                    MapLocation currLocation = hit.collider.gameObject.GetComponent<MapLoc>().location;
+                    int cnt = 0;
+                    GameObject temp = hitObj;
+                    MapLocation currLocation = new MapLocation(0, 0);
+                    while (cnt < 100 && temp.tag != "DungeonManager")
+                    {
+                        if (temp.GetComponent<MapLoc>() != null)
+                        {
+                            currLocation = temp.GetComponent<MapLoc>().location;
+                            break;
+                        }
+                        temp = temp.transform.parent.gameObject;
+                        cnt++;
+                    }
+                    if (currLocation.Equals(new MapLocation(0, 0)))
+                        return;
+
                     MapLocation exitLocation = thisMaze.exitPoint;
 
+                    Debug.Log("Current Location : " + currLocation.x + " " + currLocation.z);
+                    Debug.Log("Exit Location : " + exitLocation.x + " " + exitLocation.z);
                     destination = aStar.Build(thisMaze, currLocation, exitLocation);
 
                     magic = Instantiate(particles, this.gameObject.transform.position, this.gameObject.transform.rotation);
                     StopCoroutine(DisplayMagicPath());
                     StartCoroutine(DisplayMagicPath());
+
+                    magicPathBar.size = 0;
+                    timePassed = 0;
+                    magicPathHandle.color = Color.yellow;
                 }
             }
         }

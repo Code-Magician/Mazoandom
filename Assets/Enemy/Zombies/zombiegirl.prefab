@@ -2184,7 +2184,7 @@ GameObject:
   - component: {fileID: 195621862}
   - component: {fileID: 3810602186405838354}
   m_Layer: 6
-  m_Name: zombiegirl
+  m_Name: ZOMBIEgirl
   m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2369,10 +2369,9 @@ MonoBehaviour:
   walkingSpeed: 1
   runningSpeed: 5
   rotSpeed: 5
-  approachDistance: 20
-  forgetPlayerDistance: 30
+  approachDistance: 100
+  forgetPlayerDistance: 110
   attackDistance: 3
-  minDistFromWall: 2
   anim: {fileID: 5542127211463571573}
   AttackAudioSource: {fileID: 195621862}
   AttackClips:
@@ -2383,7 +2382,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 45b612ea42cd5b6419c21e9b0ee8ebc1, type: 3}
   - {fileID: 8300000, guid: 19485eb6aeec9a842b17214bed37f79f, type: 3}
   - {fileID: 8300000, guid: 2cca7b0b46f259143aa4bcf9593805cc, type: 3}
-  ragDoll: {fileID: 8546917930699447717, guid: b822dcf4fc1cfda42823d5bd20ba77ad, type: 3}
+  ragDoll: {fileID: 6119988052822817352, guid: f575d7645a6e3384e825a7ec8bf832e1, type: 3}
 --- !u!1 &8889811393416137658
 GameObject:
   m_ObjectHideFlags: 0

@@ -1701,12 +1701,12 @@ GameObject:
   - component: {fileID: 155936789}
   - component: {fileID: 341414593864217510}
   m_Layer: 6
-  m_Name: zombieman
+  m_Name: ZOMBIEman
   m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8182110007186639411
 Transform:
   m_ObjectHideFlags: 0
@@ -1884,10 +1884,9 @@ MonoBehaviour:
   walkingSpeed: 1
   runningSpeed: 3
   rotSpeed: 5
-  approachDistance: 20
-  forgetPlayerDistance: 30
+  approachDistance: 100
+  forgetPlayerDistance: 110
   attackDistance: 3
-  minDistFromWall: 2
   anim: {fileID: 4858005932450810756}
   AttackAudioSource: {fileID: 155936789}
   AttackClips:
@@ -1898,7 +1897,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 45b612ea42cd5b6419c21e9b0ee8ebc1, type: 3}
   - {fileID: 8300000, guid: 19485eb6aeec9a842b17214bed37f79f, type: 3}
   - {fileID: 8300000, guid: 2cca7b0b46f259143aa4bcf9593805cc, type: 3}
-  ragDoll: {fileID: 3021429156624684033, guid: f8749e76adc671e4086c7454a436b1bc, type: 3}
+  ragDoll: {fileID: 6807256914910128875, guid: 293d8c12dce3f624aacf6ab6a396b199, type: 3}
 --- !u!1 &5215620285009353330
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5836413997457110923}
   - component: {fileID: 5836413997457110922}
-  - component: {fileID: 5836413997457110920}
   m_Layer: 0
   m_Name: MultiDungeonManager
-  m_TagString: Untagged
+  m_TagString: DungeonManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,30 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfabd19a98a8b54bbc77e50c5f193b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  width: 15
-  depth: 15
+  maze: {fileID: 373271533765034391, guid: 8b28742a954d83c47a7f8fb836748497, type: 3}
+  path: {fileID: 1100314108602869856, guid: 456ab451dcfa8d044a3bb4b04966b54f, type: 3}
+  FPC: {fileID: 0}
+  FinsihLine: {fileID: 0}
+  totalLevels: 3
+  width: 10
+  depth: 10
   scale: 6
   levelMultiplier: 1.5
   stairWell: {fileID: 4778471163850694791, guid: f46448975bac3ad4dac5c191e9c1cee7, type: 3}
---- !u!114 &5836413997457110920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5836413997457110965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 605a0b73b99554df09ba1d171c11a5b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  teleportPrefab: {fileID: 8578169865332986168, guid: ed9d5c163d29144f79ee89e5e8b0dd89, type: 3}
-  startMaze: 0
-  endMaze: 0

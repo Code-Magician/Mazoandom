@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FPController : MonoBehaviour
 {
@@ -32,10 +33,10 @@ public class FPController : MonoBehaviour
     [SerializeField] GameObject aim;
     [SerializeField] TMP_Text ammunationText;
     [SerializeField] TMP_Text ammoClipText;
-    [SerializeField] TMP_Text healthText;
     [SerializeField] GameObject LevelCompleteMenu;
     [SerializeField] GameObject WaitMenu;
     [SerializeField] TMP_Text zombiesLeftText;
+    [SerializeField] Scrollbar healthBar;
 
 
 
@@ -50,6 +51,7 @@ public class FPController : MonoBehaviour
     public MapLocation finishLine;
     GameObject temp;
     bool canShoot = true;
+    bool grounded;
 
 
     // Inventory
@@ -84,7 +86,7 @@ public class FPController : MonoBehaviour
     void Update()
     {
         // FPC Jump
-        bool grounded = IsOnGround();
+        grounded = IsOnGround();
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
             rb.AddForce(0, jumpForce, 0);
@@ -135,18 +137,11 @@ public class FPController : MonoBehaviour
         // Reload Gun
         if (Input.GetKeyDown(KeyCode.R) && anim.GetBool("Weapon"))
         {
+            canShoot = false;
+            Invoke("ToggleCanShoot", 1.1f);
             anim.SetTrigger("Reload");
 
-            // Reloading ammoclip
-            int ammoNeeded = maxAmmoClip - ammoClip;
-            int ammoAvailable = Mathf.Min(ammoNeeded, ammo);
-            ammoClip += ammoAvailable;
-            ammo -= ammoAvailable;
-            RefreshDisplay();
-
             reload.Play();
-            Debug.Log("Ammo Clip: " + ammoClip);
-            Debug.Log("Ammo: " + ammo);
         }
 
         // Walking with Weapon
@@ -313,7 +308,6 @@ public class FPController : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape) && cursorIsLocked)
         {
-            SceneManager.LoadScene("MainMenu");
             LockCursor(false);
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0) && !cursorIsLocked)
@@ -370,6 +364,17 @@ public class FPController : MonoBehaviour
     }
 
 
+    public void Reload()
+    {
+        // Reloading ammoclip
+        int ammoNeeded = maxAmmoClip - ammoClip;
+        int ammoAvailable = Mathf.Min(ammoNeeded, ammo);
+        ammoClip += ammoAvailable;
+        ammo -= ammoAvailable;
+        RefreshDisplay();
+    }
+
+
     private void ToggleCanShoot()
     {
         canShoot = true;
@@ -384,12 +389,13 @@ public class FPController : MonoBehaviour
         {
             GameoverWith("Death");
         }
-        Debug.Log("Health: " + health);
+        // Debug.Log("Health: " + health);
     }
 
 
     private void GameoverWith(string action)
     {
+        CancelInvoke("RandomFootsteps");
         if (action == "Dance")
         {
             LevelCompleteMenu.SetActive(true);
@@ -412,7 +418,7 @@ public class FPController : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        healthText.text = "Health : " + health;
+        healthBar.size = health / 100f;
         ammoClipText.text = "AmmoClip : " + ammoClip;
         ammunationText.text = "Ammunation : " + ammo;
     }
@@ -438,7 +444,6 @@ public class FPController : MonoBehaviour
     public void MainMenu()
     {
         LevelCompleteMenu.SetActive(false);
-        SceneManager.LoadScene("MainMenu");
     }
 
     private void WaitUI()

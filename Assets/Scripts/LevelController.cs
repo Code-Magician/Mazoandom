@@ -26,6 +26,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] TMP_Text zombiesLeftText;
 
 
+
     private void Awake()
     {
         BuildLevel();
@@ -54,6 +55,10 @@ public class LevelController : MonoBehaviour
         }
         GameStats.totalZombiesInCurrentLevel = 0;
         GameStats.gameOver = false;
+        GameStats.currLevel = 1;
+
+        CancelInvoke("RefreshCurrFloor");
+        InvokeRepeating("RefreshCurrFloor", 0, 2f);
     }
 
     public void MoveToNextLevel()
@@ -75,10 +80,8 @@ public class LevelController : MonoBehaviour
             floors = Mathf.Clamp(floors + 1, 3, maxFloors);
         }
 
-        CancelInvoke("RefreshCurrFloor");
-        InvokeRepeating("RefreshCurrFloor", 0, 2f);
-        BuildLevel();
 
+        BuildLevel();
     }
 
     private void RefreshCurrFloor()
@@ -92,7 +95,10 @@ public class LevelController : MonoBehaviour
             {
                 Maze m = obj.GetComponentInParent<Maze>();
                 if (m != null)
+                {
                     currFloorText.text = "Current Floor : " + (m.level + 1);
+                    GameStats.currLevel = m.level + 1;
+                }
             }
         }
     }

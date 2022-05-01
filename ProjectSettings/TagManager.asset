@@ -8,6 +8,10 @@ TagManager:
   - Ammo
   - Med
   - FinishLine
+  - Deadend
+  - Zombie
+  - Ragdoll
+  - DungeonManager
   layers:
   - Default
   - TransparentFX

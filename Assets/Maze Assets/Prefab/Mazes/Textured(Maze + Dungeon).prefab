@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 633a299f216c8104b813d657c7d60f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  It_is_a: 0
+  It_is_a: 1
   lenX: 20
   lenZ: 20
   scale: 6
@@ -57,91 +57,203 @@ MonoBehaviour:
   straightH:
     prefab: {fileID: 2814305486633600616, guid: a3f0f47096d17944f94deda48deaf680, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: -5
+    X: 5
+    nZ: 0
+    Z: 0
   straightV:
     prefab: {fileID: 2814305486633600616, guid: a3f0f47096d17944f94deda48deaf680, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: 0
+    X: 0
+    nZ: -5
+    Z: 5
   straightLightH:
     prefab: {fileID: 0}
     rotation: {x: 0, y: 0, z: 0}
+    nX: -5
+    X: 5
+    nZ: 0
+    Z: 0
   straightLightV:
     prefab: {fileID: 0}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 0
+    nZ: -5
+    Z: 5
   deadEnd_Up:
     prefab: {fileID: 5947564772507152072, guid: cac6e34d1f0c3264cb2d905e01f9d154, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: 0
+    X: 0
+    nZ: -5
+    Z: 0
   deadEnd_Down:
     prefab: {fileID: 5947564772507152072, guid: cac6e34d1f0c3264cb2d905e01f9d154, type: 3}
     rotation: {x: 0, y: -90, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 5
   deadEnd_Left:
     prefab: {fileID: 5947564772507152072, guid: cac6e34d1f0c3264cb2d905e01f9d154, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 5
+    nZ: 0
+    Z: 0
   deadEnd_Right:
     prefab: {fileID: 5947564772507152072, guid: cac6e34d1f0c3264cb2d905e01f9d154, type: 3}
     rotation: {x: 0, y: 180, z: 0}
+    nX: -5
+    X: 0
+    nZ: 0
+    Z: 0
   crossRoad_:
     prefab: {fileID: 1875168719096875108, guid: 2cb4feecbca34a0409c6f0409f9a062a, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: -5
+    X: 5
+    nZ: -5
+    Z: 5
   tJunction_DeadUp:
     prefab: {fileID: 3730907246396340923, guid: 27abba2ee727ebc478f8aa66d5e53525, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: -5
+    X: 5
+    nZ: -5
+    Z: 0
   tJunciton_DeadDown:
     prefab: {fileID: 3730907246396340923, guid: 27abba2ee727ebc478f8aa66d5e53525, type: 3}
     rotation: {x: 0, y: -90, z: 0}
+    nX: -5
+    X: 5
+    nZ: 0
+    Z: 5
   tJunction_DeadLeft:
     prefab: {fileID: 3730907246396340923, guid: 27abba2ee727ebc478f8aa66d5e53525, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 5
+    nZ: -5
+    Z: 5
   tJunction_DeadRight:
     prefab: {fileID: 3730907246396340923, guid: 27abba2ee727ebc478f8aa66d5e53525, type: 3}
     rotation: {x: 0, y: 180, z: 0}
+    nX: -5
+    X: 0
+    nZ: -5
+    Z: 5
   right_Up_Corner:
     prefab: {fileID: 5046538809789050257, guid: b33e93ad0239170418d5cf696536ae09, type: 3}
     rotation: {x: 0, y: 180, z: 0}
+    nX: -5
+    X: 0
+    nZ: -5
+    Z: 0
   right_Down_Corner:
     prefab: {fileID: 5046538809789050257, guid: b33e93ad0239170418d5cf696536ae09, type: 3}
     rotation: {x: 0, y: -90, z: 0}
+    nX: -5
+    X: 0
+    nZ: 0
+    Z: 5
   left_Up_Corner:
     prefab: {fileID: 5046538809789050257, guid: b33e93ad0239170418d5cf696536ae09, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: 0
+    X: 5
+    nZ: -5
+    Z: 0
   left_Down_Corner:
     prefab: {fileID: 5046538809789050257, guid: b33e93ad0239170418d5cf696536ae09, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 5
+    nZ: 0
+    Z: 5
   floorPiece:
     prefab: {fileID: 365804753808278135, guid: e729f35bf2203b7429948d50fd70af6e, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: -5
+    X: 5
+    nZ: -5
+    Z: 5
   ceilingPiece:
     prefab: {fileID: 1331516156671902570, guid: b8939306e27674d4bac83ff402f75e8b, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: -5
+    X: 5
+    nZ: -5
+    Z: 5
   topWall:
     prefab: {fileID: 4847391303474395813, guid: de525acf680778a4488a6efc2ed3ed8e, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   downWall:
     prefab: {fileID: 4847391303474395813, guid: de525acf680778a4488a6efc2ed3ed8e, type: 3}
     rotation: {x: 0, y: 180, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   leftWall:
     prefab: {fileID: 4847391303474395813, guid: de525acf680778a4488a6efc2ed3ed8e, type: 3}
     rotation: {x: 0, y: -90, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   rightWall:
     prefab: {fileID: 4847391303474395813, guid: de525acf680778a4488a6efc2ed3ed8e, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   topDoor:
     prefab: {fileID: 4911816272365633369, guid: 85ded611648674c46ba23d11ed9fc7a7, type: 3}
     rotation: {x: 0, y: 180, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   downDoor:
     prefab: {fileID: 4911816272365633369, guid: 85ded611648674c46ba23d11ed9fc7a7, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   leftDoor:
     prefab: {fileID: 4911816272365633369, guid: 85ded611648674c46ba23d11ed9fc7a7, type: 3}
     rotation: {x: 0, y: 90, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   rightDoor:
     prefab: {fileID: 4911816272365633369, guid: 85ded611648674c46ba23d11ed9fc7a7, type: 3}
     rotation: {x: 0, y: -90, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   cornerPiller:
     prefab: {fileID: 2064562247666178280, guid: 4244206bf49f92740984edf3cfa77f57, type: 3}
     rotation: {x: 0, y: 0, z: 0}
+    nX: 0
+    X: 0
+    nZ: 0
+    Z: 0
   FPC: {fileID: 0}
   room: 2
-  minSize: 6
-  MaxSize: 6
+  minSize: 5
+  MaxSize: 5
 --- !u!114 &1357438160749355676
 MonoBehaviour:
   m_ObjectHideFlags: 0

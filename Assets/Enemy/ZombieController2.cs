@@ -20,10 +20,9 @@ public class ZombieController2 : MonoBehaviour
     [SerializeField] float walkingSpeed = 1f;
     [SerializeField] float runningSpeed = 5f;
     [SerializeField] float rotSpeed = 5f;
-    [SerializeField] float approachDistance = 20;
-    [SerializeField] float forgetPlayerDistance = 30f;
+    [SerializeField] float approachDistance = 100f;
+    [SerializeField] float forgetPlayerDistance = 110f;
     [SerializeField] float attackDistance = 3f;
-    [SerializeField] float minDistFromWall = 1f;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource AttackAudioSource;
     [SerializeField] AudioClip[] AttackClips;
@@ -58,7 +57,7 @@ public class ZombieController2 : MonoBehaviour
             case STATE.WANDER:
                 if (hasWanderTarget)
                 {
-                    if (!MoveToTarget(tempTarget, 0.1f, walkingSpeed))
+                    if (!MoveToTarget(tempTarget, 0.5f, walkingSpeed))
                         hasWanderTarget = false;
                 }
                 else
@@ -151,16 +150,18 @@ public class ZombieController2 : MonoBehaviour
 
     private bool MoveToTarget(Vector3 destination, float stoppingDistance, float speed)
     {
-        // Rotate
-        Vector3 ourPos = new Vector3(transform.position.x, 0, transform.position.z);
-        destination.y = 0;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(destination - ourPos),
-                                                rotSpeed * Time.deltaTime);
-
-        // Move towards player
         float dist = Vector3.Distance(transform.position, destination);
         if (!(dist >= 0 && dist <= stoppingDistance))
         {
+            // Rotate
+            Vector3 ourPos = new Vector3(transform.position.x, 0, transform.position.z);
+            destination.y = 0;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(destination - ourPos),
+                                                    rotSpeed * Time.deltaTime);
+
+            // Move towards player
+
+
             transform.position += transform.forward * speed * Time.deltaTime;
             return true;
         }
@@ -172,8 +173,17 @@ public class ZombieController2 : MonoBehaviour
     {
         int count = 0;
 
-        float x = transform.position.x + Random.Range(-5f, 5f);
-        float z = transform.position.z + Random.Range(-5f, 5f);
+        float x;
+        if (Random.Range(0, 10) < 5)
+            x = transform.position.x + 2f;
+        else
+            x = transform.position.x - 2f;
+
+        float z;
+        if (Random.Range(0, 10) < 5)
+            z = transform.position.z + 2f;
+        else
+            z = transform.position.z - 2f;
         float y = transform.position.y;
         Vector3 newTarget = new Vector3(x, y, z);
 
@@ -181,7 +191,7 @@ public class ZombieController2 : MonoBehaviour
         {
             RaycastHit hitInfo;
             Ray ray = new Ray(newTarget + new Vector3(0, 2, 0), -Vector3.up);
-            if (Physics.Raycast(ray, out hitInfo))
+            if (Physics.Raycast(ray, out hitInfo, 5f))
             {
                 MapLoc mLoc = hitInfo.collider.gameObject.GetComponent<MapLoc>();
                 if (mLoc == null)
@@ -192,20 +202,20 @@ public class ZombieController2 : MonoBehaviour
                     Ray raynZ = new Ray(transform.position + new Vector3(0, 2, 0), -Vector3.back);
 
                     bool right = false, left = false, forward = false, backward = false;
-                    if (Physics.Raycast(rayX, out hitInfo))
+                    if (Physics.Raycast(rayX, out hitInfo, 5f))
                     {
                         right = true;
                     }
 
-                    if (Physics.Raycast(raynX, out hitInfo))
+                    if (Physics.Raycast(raynX, out hitInfo, 5f))
                     {
                         left = true;
                     }
-                    if (Physics.Raycast(rayZ, out hitInfo))
+                    if (Physics.Raycast(rayZ, out hitInfo, 5f))
                     {
                         forward = true;
                     }
-                    if (Physics.Raycast(raynZ, out hitInfo))
+                    if (Physics.Raycast(raynZ, out hitInfo, 5f))
                     {
                         backward = true;
                     }
@@ -213,17 +223,30 @@ public class ZombieController2 : MonoBehaviour
                     if (right && left)
                     {
                         x = transform.position.x;
-                        z = transform.position.z + Random.Range(-5f, 5f);
+                        if (Random.Range(0, 10) < 5)
+                            z = transform.position.z + 2f;
+                        else
+                            z = transform.position.z - 2f;
                     }
                     else if (forward && backward)
                     {
-                        x = transform.position.x + Random.Range(-5f, 5f);
+                        if (Random.Range(0, 10) < 5)
+                            x = transform.position.x + 2f;
+                        else
+                            x = transform.position.x - 2f;
                         z = transform.position.z;
                     }
                     else
                     {
-                        x = transform.position.x + Random.Range(-5f, 5f);
-                        z = transform.position.z + Random.Range(-5f, 5f);
+                        if (Random.Range(0, 10) < 5)
+                            x = transform.position.x + 2f;
+                        else
+                            x = transform.position.x - 2f;
+
+                        if (Random.Range(0, 10) < 5)
+                            z = transform.position.z + 2f;
+                        else
+                            z = transform.position.z - 2f;
                     }
 
                     y = transform.position.y;
@@ -313,7 +336,7 @@ public class ZombieController2 : MonoBehaviour
         {
             if (hitInfo.collider.gameObject.tag == "Player")
             {
-                Debug.Log("Can See Player");
+                // Debug.Log("Can See Player");
                 return true;
             }
         }
@@ -330,7 +353,7 @@ public class ZombieController2 : MonoBehaviour
         {
             return true;
         }
-        else if (Physics.Raycast(ray, out hitInfo))
+        else if (Physics.Raycast(ray, out hitInfo, 1000f))
         {
             if (hitInfo.collider.gameObject.tag != "Player")
                 return true;
@@ -402,10 +425,11 @@ public class ZombieController2 : MonoBehaviour
 
     public void KillSelf()
     {
-        if (Random.Range(0, 100) < 50)
+        float dist = Vector3.Distance(transform.position, target.position);
+        if (dist <= forgetPlayerDistance)
         {
             GameObject temp = Instantiate(ragDoll, transform.position, transform.rotation);
-            temp.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.gameObject.transform.forward * 100, ForceMode.Impulse);
+            temp.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.gameObject.transform.forward * Mathf.Abs(GameStats.bulletForce - 4 * dist), ForceMode.Impulse);
             Destroy(gameObject);
             return;
         }

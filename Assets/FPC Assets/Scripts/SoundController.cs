@@ -5,6 +5,7 @@ using UnityEngine;
 public class SoundController : MonoBehaviour
 {
     [SerializeField] AudioSource fireAudio;
+    [SerializeField] FPController FPC;
 
 
     public void Fire()
@@ -12,4 +13,9 @@ public class SoundController : MonoBehaviour
         fireAudio.Play();
     }
 
+
+    public void Reload()
+    {
+        FPC.Reload();
+    }
 }
