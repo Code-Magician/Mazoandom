@@ -64,12 +64,12 @@ public class MultiDungeonManager : MonoBehaviour
         width += 6;
         depth += 6;
         ConnectMazesNew();
-        PlaceFPC();
+        PlaceFinishLine();
         // PlaceTelePort();
     }
 
 
-    void PlaceFPC()
+    void PlaceFinishLine()
     {
         // Place FPC
         bool placed = false;
@@ -83,6 +83,7 @@ public class MultiDungeonManager : MonoBehaviour
                 {
                     Debug.Log("Placed");
                     FPC.transform.position = m.piecePlaces[x, z].model.transform.position + new Vector3(0, 2f, 0);
+                    m.entryPoint = new MapLocation(x, z);
                     placed = true;
                     break;
                 }
@@ -105,6 +106,7 @@ public class MultiDungeonManager : MonoBehaviour
                     Debug.Log("Finished");
                     FinsihLine.transform.position = m.piecePlaces[x, z].model.transform.position;
                     FinsihLine.transform.rotation = m.piecePlaces[x, z].model.transform.rotation;
+                    m.exitPoint = new MapLocation(x, z);
                     placed = true;
                     break;
                 }
@@ -114,6 +116,20 @@ public class MultiDungeonManager : MonoBehaviour
         }
 
         FPC.SetActive(true);
+
+
+        //Place Zombies, Ammo and Med
+        foreach (Maze maze in dungeons)
+        {
+            PlaceObjects[] placeObjs = maze.GetComponents<PlaceObjects>();
+            foreach (PlaceObjects x in placeObjs)
+            {
+                if (x != null)
+                {
+                    x.Place();
+                }
+            }
+        }
     }
 
 

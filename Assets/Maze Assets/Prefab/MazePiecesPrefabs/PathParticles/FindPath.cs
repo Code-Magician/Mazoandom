@@ -9,31 +9,34 @@ public class FindPath : MonoBehaviour
 
     GameObject magic;
     [SerializeField] float relapseTime = 100f;
-    [SerializeField] Scrollbar magicPathBar;
-    [SerializeField] Image magicPathHandle;
+    [SerializeField] Image magicPathBar;
     float timePassed = 110;
     Maze thisMaze;
     AStarPathFinding aStar;
     PathMarker destination;
+    float lerpSpeed;
 
     private void Start()
     {
         aStar = GetComponent<AStarPathFinding>();
+        magicPathBar.fillAmount = 1;
+        timePassed = 100;
     }
 
     private void Update()
     {
+        lerpSpeed = 5 * Time.deltaTime;
         if (timePassed <= relapseTime + 1f)
         {
             timePassed += Time.deltaTime;
-            magicPathBar.size = (timePassed) / 100;
+            magicPathBar.fillAmount = Mathf.Lerp(magicPathBar.fillAmount, timePassed / 100f, lerpSpeed);
         }
         else
         {
-            magicPathHandle.color = Color.green;
+            magicPathBar.color = Color.green;
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1) && (timePassed >= relapseTime))
+        if (Input.GetKeyDown(KeyCode.Mouse1) && magicPathBar.fillAmount >= 0.5f)
         {
 
             if (aStar != null)
@@ -43,18 +46,18 @@ public class FindPath : MonoBehaviour
                 if (Physics.Raycast(ray, out hit))
                 {
                     GameObject hitObj = hit.collider.gameObject;
-                    if (hitObj == null)
+                    if (hitObj == null || hitObj.tag == "Stairwell")
                         return;
 
                     Debug.Log("Hitted Gameoject : " + hitObj.name);
-                    thisMaze = hitObj.transform.root.gameObject.transform.GetChild(GameStats.currLevel - 1).GetComponent<Maze>();
+                    thisMaze = hitObj.transform.root.gameObject.transform.GetChild(GameStats.currFloor - 1).GetComponent<Maze>();
                     Debug.Log("Maze is  : " + thisMaze.gameObject);
                     if (thisMaze == null)
                         return;
 
-                    AStarPathFinding hasAstar = thisMaze.gameObject.GetComponent<AStarPathFinding>();
-                    if (hasAstar != null)
-                        return;
+                    // AStarPathFinding hasAstar = thisMaze.gameObject.GetComponent<AStarPathFinding>();
+                    // if (hasAstar != null)
+                    //     return;
 
                     int cnt = 0;
                     GameObject temp = hitObj;
@@ -64,6 +67,9 @@ public class FindPath : MonoBehaviour
                         if (temp.GetComponent<MapLoc>() != null)
                         {
                             currLocation = temp.GetComponent<MapLoc>().location;
+                            if (thisMaze.piecePlaces[currLocation.x, currLocation.z].piece == Maze.PieceType.StairWell_Up || thisMaze.piecePlaces[currLocation.x, currLocation.z].piece == Maze.PieceType.StairWell_Down)
+                                return;
+                            Debug.Log("Current Location obj : " + temp.name);
                             break;
                         }
                         temp = temp.transform.parent.gameObject;
@@ -76,15 +82,21 @@ public class FindPath : MonoBehaviour
 
                     Debug.Log("Current Location : " + currLocation.x + " " + currLocation.z);
                     Debug.Log("Exit Location : " + exitLocation.x + " " + exitLocation.z);
-                    destination = aStar.Build(thisMaze, currLocation, exitLocation);
+                    Debug.Log(thisMaze.map[currLocation.x, currLocation.z]);
+                    Debug.Log(thisMaze.map[exitLocation.x, exitLocation.z]);
+
+
+                    if (!currLocation.Equals(exitLocation))
+                        destination = aStar.Build(thisMaze, currLocation, exitLocation);
 
                     magic = Instantiate(particles, this.gameObject.transform.position, this.gameObject.transform.rotation);
+                    Debug.Log("Magic Instantiated");
                     StopCoroutine(DisplayMagicPath());
                     StartCoroutine(DisplayMagicPath());
 
-                    magicPathBar.size = 0;
-                    timePassed = 0;
-                    magicPathHandle.color = Color.yellow;
+                    magicPathBar.fillAmount = Mathf.Lerp(magicPathBar.fillAmount, magicPathBar.fillAmount - 0.5f, lerpSpeed);
+                    timePassed -= 50;
+                    magicPathBar.color = Color.white;
                 }
             }
         }

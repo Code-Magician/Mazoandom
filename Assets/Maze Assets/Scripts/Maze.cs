@@ -196,7 +196,7 @@ public class Maze : MonoBehaviour
     public void Build()
     {
         DrawMap();
-        PlaceFPC();
+        // PlaceFPC();
     }
 
 
@@ -647,14 +647,20 @@ public class Maze : MonoBehaviour
             }
         }
 
-        PlaceObjects[] placeObjs = GetComponents<PlaceObjects>();
-        foreach (PlaceObjects x in placeObjs)
-        {
-            if (x != null)
-            {
-                x.Place();
-            }
-        }
+
+        // if (level == 0)
+        // {
+        //     PlaceFPC();
+        // }
+
+        // PlaceObjects[] placeObjs = GetComponents<PlaceObjects>();
+        // foreach (PlaceObjects x in placeObjs)
+        // {
+        //     if (x != null)
+        //     {
+        //         x.Place();
+        //     }
+        // }
 
 
         for (int z = 0; z < lenZ; z++)
@@ -668,6 +674,7 @@ public class Maze : MonoBehaviour
                 if (map[x, z] != 1)
                     locations.Add(new MapLocation(x, z));
             }
+
     }
 
 
@@ -752,19 +759,32 @@ public class Maze : MonoBehaviour
     // Places FPC at the random location in the maze which is not a wall.
     public void PlaceFPC()
     {
+        FPC = GameObject.Find("FPS").gameObject;
         if (FPC == null)
-            return;
-
-        int x = Random.Range(1, lenX - 1);
-        int z = Random.Range(1, lenZ - 1);
-
-        while (map[x, z] == 1)
         {
-            x = Random.Range(1, lenX - 1);
-            z = Random.Range(1, lenZ - 1);
+            Debug.Log("Player Not Placed");
+            return;
         }
 
-        FPC.transform.position = new Vector3(x * scale, 2, z * scale);
+        // Place FPC
+        bool placed = false;
+        for (int z = 0; z < lenZ; z++)
+        {
+            for (int x = 0; x < lenX; x++)
+            {
+                if (piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Down || piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Up ||
+                piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Left || piecePlaces[x, z].piece == Maze.PieceType.DeadEnd_Right)
+                {
+                    Debug.Log("Placed");
+                    FPC.transform.position = piecePlaces[x, z].model.transform.position + new Vector3(0, 2f, 0);
+                    entryPoint = new MapLocation(x, z);
+                    placed = true;
+                    break;
+                }
+            }
+            if (placed)
+                break;
+        }
     }
 
 

@@ -12,6 +12,8 @@ TagManager:
   - Zombie
   - Ragdoll
   - DungeonManager
+  - MazePiece
+  - Stairwell
   layers:
   - Default
   - TransparentFX

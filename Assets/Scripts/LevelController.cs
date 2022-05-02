@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class LevelController : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class LevelController : MonoBehaviour
     [SerializeField] TMP_Text currFloorText;
     [SerializeField] TMP_Text goalFloorText;
     [SerializeField] TMP_Text levelText;
-    [SerializeField] TMP_Text zombiesLeftText;
+    [SerializeField] Text zombiesLeftText;
 
 
 
@@ -44,7 +45,7 @@ public class LevelController : MonoBehaviour
         multiDungeonManager.depth = Mathf.Min(depth, maxdepth);
         multiDungeonManager.Build();
 
-        zombiesLeftText.text = "Zombies Left : " + GameStats.totalZombiesInCurrentLevel;
+        zombiesLeftText.text = GameStats.totalZombiesInCurrentLevel.ToString("00");
     }
 
     private void Reset()
@@ -55,7 +56,7 @@ public class LevelController : MonoBehaviour
         }
         GameStats.totalZombiesInCurrentLevel = 0;
         GameStats.gameOver = false;
-        GameStats.currLevel = 1;
+        GameStats.currFloor = 1;
 
         CancelInvoke("RefreshCurrFloor");
         InvokeRepeating("RefreshCurrFloor", 0, 2f);
@@ -65,6 +66,7 @@ public class LevelController : MonoBehaviour
     {
         level++;
         levelText.text = "Level : " + level;
+        GameStats.currLevel = level;
 
         int randINT = Random.Range(0, 90);
         if (randINT < 30)
@@ -97,7 +99,7 @@ public class LevelController : MonoBehaviour
                 if (m != null)
                 {
                     currFloorText.text = "Current Floor : " + (m.level + 1);
-                    GameStats.currLevel = m.level + 1;
+                    GameStats.currFloor = m.level + 1;
                 }
             }
         }

@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainUIManager : MonoBehaviour
 {
 
+    [SerializeField] Slider sensitivitySlider;
 
     public void Play()
     {
@@ -26,5 +28,11 @@ public class MainUIManager : MonoBehaviour
 #else
          Application.Quit();
 #endif
+    }
+
+
+    public void SensitivityChange()
+    {
+        GameStats.sensitivity = sensitivitySlider.value;
     }
 }

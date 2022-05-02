@@ -24,11 +24,22 @@ public class PlaceObjects : MonoBehaviour
                         GameObject randPrefab = prefab[Random.Range(0, prefab.Length)];
                         if (maze.piecePlaces[x, z].model != null)
                         {
-                            Transform tr = maze.piecePlaces[x, z].model.transform;
+                            Vector3 trPos = maze.piecePlaces[x, z].model.transform.position;
+                            Quaternion trRot = maze.piecePlaces[x, z].model.transform.rotation;
+
+
                             float height = maze.scale * maze.level * maze.levelMultiplier;
-                            GameObject temp = Instantiate(randPrefab, new Vector3(tr.position.x, height, tr.position.z), tr.rotation, this.transform);
+                            GameObject temp = Instantiate(randPrefab, trPos, trRot, this.transform);
                             if (temp.tag == "Zombie")
-                                GameStats.totalZombiesInCurrentLevel++;
+                            {
+                                GameObject fpc = GameObject.FindGameObjectWithTag("Player").gameObject;
+                                if (Vector3.Distance(trPos, fpc.transform.position) <= 5)
+                                {
+                                    Destroy(temp);
+                                }
+                                else
+                                    GameStats.totalZombiesInCurrentLevel++;
+                            }
                         }
                     }
                 }

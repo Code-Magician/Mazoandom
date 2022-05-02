@@ -49,7 +49,7 @@ public class ZombieController2 : MonoBehaviour
         {
             case STATE.IDLE:
                 ToggleAnimationTriggers();
-                if (!GameStats.gameOver && CanSeePlayer())
+                if (!GameStats.gameOver && CanSeePlayer() && GameStats.zombieCanAttack)
                     state = STATE.CHASE;
                 else if (Random.Range(0, 5000) < 10)
                     state = STATE.WANDER;
@@ -72,7 +72,7 @@ public class ZombieController2 : MonoBehaviour
                         anim.SetBool("Walk", true);
                     }
                 }
-                if (!GameStats.gameOver && CanSeePlayer())
+                if (!GameStats.gameOver && CanSeePlayer() && GameStats.zombieCanAttack)
                     state = STATE.CHASE;
                 else if (Random.Range(0, 5000) < 10)
                 {
@@ -84,7 +84,7 @@ public class ZombieController2 : MonoBehaviour
             case STATE.CHASE:
                 if (!GameStats.gameOver)
                 {
-                    if (!MoveToTarget(target.position, attackDistance, runningSpeed))
+                    if (!MoveToTarget(target.position, attackDistance, runningSpeed) && GameStats.zombieCanAttack)
                     {
                         state = STATE.ATTTACK;
                         hasWanderTarget = false;
@@ -96,7 +96,7 @@ public class ZombieController2 : MonoBehaviour
                         anim.SetBool("Run", true);
                     }
 
-                    if (InAttackRange())
+                    if (InAttackRange() && GameStats.zombieCanAttack)
                     {
                         state = STATE.ATTTACK;
                         hasWanderTarget = false;

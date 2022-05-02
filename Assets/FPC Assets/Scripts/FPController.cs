@@ -12,6 +12,8 @@ public class FPController : MonoBehaviour
     // [SerializeField] float sprintSpeed = 20f;
     [SerializeField] float jumpForce = 300f;
     [Range(0, 10)][SerializeField] float sensitivity = 1f;
+    float maxSensitivity = 10f;
+    [SerializeField] float bulletForce = 800f;
 
 
     [Header("References")]
@@ -31,12 +33,16 @@ public class FPController : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] GameObject aim;
-    [SerializeField] TMP_Text ammunationText;
-    [SerializeField] TMP_Text ammoClipText;
+    [SerializeField] Text ammunationText;
+    [SerializeField] GameObject[] ammoClips;
     [SerializeField] GameObject LevelCompleteMenu;
     [SerializeField] GameObject WaitMenu;
-    [SerializeField] TMP_Text zombiesLeftText;
-    [SerializeField] Scrollbar healthBar;
+    [SerializeField] Text waitMenuLevelText;
+    [SerializeField] Text zombiesLeftText;
+    [SerializeField] Image healthBar;
+    [SerializeField] Text healthText;
+    [SerializeField] GameObject PauseMenu;
+    [SerializeField] Slider sensitivitySlider;
 
 
 
@@ -50,7 +56,7 @@ public class FPController : MonoBehaviour
     bool previouslyGrounded = true;
     public MapLocation finishLine;
     GameObject temp;
-    bool canShoot = true;
+    public bool canShoot = true;
     bool grounded;
 
 
@@ -59,18 +65,22 @@ public class FPController : MonoBehaviour
     int maxAmmo = 100;
     int ammoClip = 10;
     int maxAmmoClip = 10;
-    int health = 100;
-    int maxHealth = 100;
+    float health = 100;
+    float maxHealth = 100;
 
 
     private void Awake()
     {
+        Time.timeScale = 1;
+        sensitivity = GameStats.sensitivity;
+        sensitivitySlider.value = sensitivity;
         LockCursor(true);
     }
 
 
     void Start()
     {
+        GameStats.bulletForce = bulletForce;
         rb = GetComponent<Rigidbody>();
         fpsCollider = GetComponent<CapsuleCollider>();
 
@@ -79,6 +89,11 @@ public class FPController : MonoBehaviour
 
 
         RefreshDisplay();
+
+        if (GameStats.currLevel == 1)
+        {
+            Invoke("ZomBieCanAttack", 5f);
+        }
     }
 
 
@@ -138,7 +153,7 @@ public class FPController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && anim.GetBool("Weapon"))
         {
             canShoot = false;
-            Invoke("ToggleCanShoot", 1.1f);
+            Invoke("ToggleCanShoot", 3.1f);
             anim.SetTrigger("Reload");
 
             reload.Play();
@@ -167,6 +182,8 @@ public class FPController : MonoBehaviour
         //     isDead = true;
         //     dealth.Play();
         // }
+
+        HealthBarFiller();
     }
 
 
@@ -253,6 +270,7 @@ public class FPController : MonoBehaviour
         if (other.gameObject.tag == "FinishLine")
         {
             GameoverWith("Dance");
+            GameStats.zombieCanAttack = false;
         }
     }
 
@@ -309,6 +327,7 @@ public class FPController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Escape) && cursorIsLocked)
         {
             LockCursor(false);
+            Pause(true);
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0) && !cursorIsLocked)
         {
@@ -348,7 +367,7 @@ public class FPController : MonoBehaviour
 
     private void Shoot()
     {
-        Invoke("ToggleCanShoot", 1.1f);
+        Invoke("ToggleCanShoot", 0.73f);
         ammoClip--;
         RefreshDisplay();
         RaycastHit hitInfo;
@@ -357,8 +376,9 @@ public class FPController : MonoBehaviour
             GameObject shotObj = hitInfo.collider.gameObject;
             if (shotObj.tag == "Zombie")
             {
-                zombiesLeftText.text = "Zombies Left : " + Mathf.Max(0, --GameStats.totalZombiesInCurrentLevel);
-                shotObj.GetComponent<ZombieController2>().KillSelf();
+                zombiesLeftText.text = Mathf.Max(0, --GameStats.totalZombiesInCurrentLevel).ToString("00");
+                ZombieController2 zc2 = shotObj.GetComponent<ZombieController2>();
+                zc2.KillSelf();
             }
         }
     }
@@ -401,16 +421,15 @@ public class FPController : MonoBehaviour
             LevelCompleteMenu.SetActive(true);
             CancelInvoke("RandomFootsteps");
         }
-
-        Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        temp = Instantiate(fullBodyModel, pos, transform.rotation);
-        temp.GetComponent<Animator>().SetTrigger(action);
-
         LockCursor(false);
 
         GameStats.gameOver = true;
 
         aim.SetActive(false);
+
+        Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        temp = Instantiate(fullBodyModel, pos, transform.rotation);
+        temp.GetComponent<Animator>().SetTrigger(action);
 
         gameObject.SetActive(false);
     }
@@ -418,9 +437,25 @@ public class FPController : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        healthBar.size = health / 100f;
-        ammoClipText.text = "AmmoClip : " + ammoClip;
-        ammunationText.text = "Ammunation : " + ammo;
+        healthText.text = health.ToString("00");
+        // ammoClipText.text = "AmmoClip : " + ammoClip;
+        for (int i = 0; i < ammoClips.Length; i++)
+        {
+            if ((i + 1) <= ammoClip)
+                ammoClips[i].SetActive(true);
+
+            else
+                ammoClips[i].SetActive(false);
+        }
+        ammunationText.text = ammo.ToString();
+    }
+
+    private void HealthBarFiller()
+    {
+        float lerpSpeed = 5 * Time.deltaTime;
+        float from = Mathf.Min(healthBar.fillAmount, health / 100f);
+        float to = Mathf.Max(healthBar.fillAmount, health / 100f);
+        healthBar.fillAmount = Mathf.Lerp(from, to, lerpSpeed);
     }
 
     private void ResetHealthAndAmmo()
@@ -434,20 +469,64 @@ public class FPController : MonoBehaviour
     public void NextLevel()
     {
         levelController.MoveToNextLevel();
-        WaitMenu.SetActive(true);
-        ResetHealthAndAmmo();
         Destroy(temp);
-        Invoke("WaitUI", Random.Range(2f, 3f));
+        WaitMenu.SetActive(true);
+        waitMenuLevelText.text = "Level " + GameStats.currLevel.ToString();
+        ResetHealthAndAmmo();
+        Invoke("WaitUi", Random.Range(2f, 3f));
         LevelCompleteMenu.SetActive(false);
     }
 
     public void MainMenu()
     {
+        Time.timeScale = 1;
         LevelCompleteMenu.SetActive(false);
+        PauseMenu.SetActive(false);
+        SceneManager.LoadScene("MainMenu");
     }
 
-    private void WaitUI()
+    public void WaitUi()
     {
         WaitMenu.SetActive(false);
+        Invoke("ZomBieCanAttack", 5f);
+    }
+
+    public void ZomBieCanAttack()
+    {
+        GameStats.zombieCanAttack = true;
+    }
+
+
+    public void Pause(bool action)
+    {
+        if (action)
+        {
+            PauseMenu.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            PauseMenu.SetActive(false);
+            LockCursor(true);
+            Time.timeScale = 1;
+        }
+    }
+
+
+    public void SensitivityChange()
+    {
+        sensitivity = sensitivitySlider.value;
+    }
+
+    public void SettingsBackButton()
+    {
+        if (GameStats.gameOver)
+        {
+            LevelCompleteMenu.SetActive(true);
+        }
+        else
+        {
+            PauseMenu.SetActive(true);
+        }
     }
 }
