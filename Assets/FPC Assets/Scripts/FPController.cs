@@ -43,6 +43,10 @@ public class FPController : MonoBehaviour
     [SerializeField] Text healthText;
     [SerializeField] GameObject PauseMenu;
     [SerializeField] Slider sensitivitySlider;
+    [SerializeField] Slider musicSlider;
+    [SerializeField] Text highscoreText;
+    [SerializeField] Image playerIcon;
+    [SerializeField] Text username;
 
 
 
@@ -58,11 +62,12 @@ public class FPController : MonoBehaviour
     GameObject temp;
     public bool canShoot = true;
     bool grounded;
+    int currHighscore;
 
 
     // Inventory
-    int ammo = 100;
-    int maxAmmo = 100;
+    int ammo = 40;
+    int maxAmmo = 40;
     int ammoClip = 10;
     int maxAmmoClip = 10;
     float health = 100;
@@ -72,8 +77,17 @@ public class FPController : MonoBehaviour
     private void Awake()
     {
         Time.timeScale = 1;
+
+        musicSlider.value = GameStats.musicVolume;
+        GameStats.zombieCanAttack = false;
+        Invoke("ZomBieCanAttack", 5f);
+
+        username.text = GameStats.username;
+        playerIcon.sprite = GameStats.playerIcon;
+        currHighscore = GameStats.GetHighScore();
         sensitivity = GameStats.sensitivity;
         sensitivitySlider.value = sensitivity;
+
         LockCursor(true);
     }
 
@@ -229,7 +243,7 @@ public class FPController : MonoBehaviour
     {
         if (other.gameObject.tag == "Ammo" && ammo < maxAmmo)
         {
-            ammo = Mathf.Clamp(ammo + 10, 0, maxAmmo);
+            ammo = Mathf.Clamp(ammo + 5, 0, maxAmmo);
             ammokitAudio.Play();
             Debug.Log("Ammo: " + ammo);
             Destroy(other.gameObject);
@@ -367,7 +381,7 @@ public class FPController : MonoBehaviour
 
     private void Shoot()
     {
-        Invoke("ToggleCanShoot", 0.73f);
+        Invoke("ToggleCanShoot", 1.1f);
         ammoClip--;
         RefreshDisplay();
         RaycastHit hitInfo;
@@ -379,6 +393,9 @@ public class FPController : MonoBehaviour
                 zombiesLeftText.text = Mathf.Max(0, --GameStats.totalZombiesInCurrentLevel).ToString("00");
                 ZombieController2 zc2 = shotObj.GetComponent<ZombieController2>();
                 zc2.KillSelf();
+
+                currHighscore++;
+                highscoreText.text = "Highest Kill : " + currHighscore.ToString("00");
             }
         }
     }
@@ -415,6 +432,8 @@ public class FPController : MonoBehaviour
 
     private void GameoverWith(string action)
     {
+        GameStats.ReassemblePerks();
+
         CancelInvoke("RandomFootsteps");
         if (action == "Dance")
         {
@@ -528,5 +547,11 @@ public class FPController : MonoBehaviour
         {
             PauseMenu.SetActive(true);
         }
+    }
+
+    public void MusicVolumeChange()
+    {
+        GameStats.musicVolume = musicSlider.value;
+        PersistingScript.Instance.ChangeVolume();
     }
 }

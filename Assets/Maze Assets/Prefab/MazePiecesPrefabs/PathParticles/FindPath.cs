@@ -10,6 +10,8 @@ public class FindPath : MonoBehaviour
     GameObject magic;
     [SerializeField] float relapseTime = 100f;
     [SerializeField] Image magicPathBar;
+    [SerializeField] AudioSource outOfMana;
+    [SerializeField] AudioSource magicspell;
     float timePassed = 110;
     Maze thisMaze;
     AStarPathFinding aStar;
@@ -100,10 +102,15 @@ public class FindPath : MonoBehaviour
                 }
             }
         }
+        else if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            outOfMana.Play();
+        }
     }
 
     IEnumerator DisplayMagicPath()
     {
+        magicspell.Play();
         List<MapLocation> magicPath = new List<MapLocation>();
         while (destination != null)
         {

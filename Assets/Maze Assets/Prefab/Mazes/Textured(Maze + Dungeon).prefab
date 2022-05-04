@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 373271533765034388}
   - component: {fileID: 1357438160749355676}
   - component: {fileID: 7890890550758398832}
-  - component: {fileID: 6317972331833347287}
   m_Layer: 0
   m_Name: Textured(Maze + Dungeon)
   m_TagString: Untagged
@@ -175,18 +174,3 @@ MonoBehaviour:
   prefab:
   - {fileID: 5710403498752496786, guid: 2284fb370519d4434ad0ce0946f96aa7, type: 3}
   percentageProbablity: 10
---- !u!114 &6317972331833347287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 373271533765034391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 620dfa9e0979c384dbe49a51ca580e14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefab:
-  - {fileID: 7741545902358665241, guid: 7eb2d2e5ed5664c3da253b1245ff8187, type: 3}
-  percentageProbablity: 5

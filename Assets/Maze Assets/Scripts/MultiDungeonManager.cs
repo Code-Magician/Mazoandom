@@ -130,6 +130,9 @@ public class MultiDungeonManager : MonoBehaviour
                 }
             }
         }
+
+
+        GameStats.totalZombiesSpawned = GameStats.totalZombiesInCurrentLevel;
     }
 
 

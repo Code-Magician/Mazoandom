@@ -10,8 +10,7 @@ public class SoundController : MonoBehaviour
 
     public void Fire()
     {
-        if (FPC.canShoot)
-            fireAudio.Play();
+        fireAudio.Play();
     }
 
 

@@ -11,15 +11,28 @@ public class PersistingScript : MonoBehaviour
         set;
     }
 
+    AudioSource backgroundMusic;
+
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        Instance = this;
+        if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        backgroundMusic = GetComponent<AudioSource>();
     }
 
 
-
-
+    public void ChangeVolume()
+    {
+        backgroundMusic.volume = GameStats.musicVolume;
+    }
 
 }
