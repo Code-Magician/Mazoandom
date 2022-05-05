@@ -18,11 +18,19 @@ public class FindPath : MonoBehaviour
     PathMarker destination;
     float lerpSpeed;
 
+
+    private void OnEnable()
+    {
+        magicPathBar.fillAmount = 1;
+        timePassed = 100;
+    }
+
+
     private void Start()
     {
         aStar = GetComponent<AStarPathFinding>();
-        magicPathBar.fillAmount = 1;
-        timePassed = 100;
+        // magicPathBar.fillAmount = 1;
+        // timePassed = 100;
     }
 
     private void Update()

@@ -29,6 +29,7 @@ public class FPController : MonoBehaviour
     [SerializeField] AudioSource dealth;
     [SerializeField] AudioSource reload;
     [SerializeField] LevelController levelController;
+    [SerializeField] GameMenu saveGame;
 
 
     [Header("UI References")]
@@ -45,6 +46,7 @@ public class FPController : MonoBehaviour
     [SerializeField] Slider sensitivitySlider;
     [SerializeField] Slider musicSlider;
     [SerializeField] Text highscoreText;
+    [SerializeField] Text currentScoreText;
     [SerializeField] Image playerIcon;
     [SerializeField] Text username;
 
@@ -79,12 +81,13 @@ public class FPController : MonoBehaviour
         Time.timeScale = 1;
 
         musicSlider.value = GameStats.musicVolume;
+        highscoreText.text = "Highest Kill : " + GameStats.highestKillCount.ToString("00");
         GameStats.zombieCanAttack = false;
         Invoke("ZomBieCanAttack", 5f);
 
         username.text = GameStats.username;
         playerIcon.sprite = GameStats.playerIcon;
-        currHighscore = GameStats.GetHighScore();
+        currHighscore = 0;
         sensitivity = GameStats.sensitivity;
         sensitivitySlider.value = sensitivity;
 
@@ -395,7 +398,7 @@ public class FPController : MonoBehaviour
                 zc2.KillSelf();
 
                 currHighscore++;
-                highscoreText.text = "Highest Kill : " + currHighscore.ToString("00");
+                currentScoreText.text = "Kills : " + currHighscore.ToString("00");
             }
         }
     }
@@ -432,7 +435,9 @@ public class FPController : MonoBehaviour
 
     private void GameoverWith(string action)
     {
-        GameStats.ReassemblePerks();
+        GameStats.highestKillCount = Mathf.Max(currHighscore, GameStats.highestKillCount);
+        saveGame.SaveData();
+        // GameStats.SaveData();
 
         CancelInvoke("RandomFootsteps");
         if (action == "Dance")
@@ -535,6 +540,8 @@ public class FPController : MonoBehaviour
     public void SensitivityChange()
     {
         sensitivity = sensitivitySlider.value;
+        GameStats.sensitivity = sensitivity;
+        PersistingScript.Instance.SaveSensitivityandMusicVolume();
     }
 
     public void SettingsBackButton()
@@ -553,5 +560,6 @@ public class FPController : MonoBehaviour
     {
         GameStats.musicVolume = musicSlider.value;
         PersistingScript.Instance.ChangeVolume();
+        PersistingScript.Instance.SaveSensitivityandMusicVolume();
     }
 }

@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
 public class MainUIManager : MonoBehaviour
 {
@@ -21,9 +23,6 @@ public class MainUIManager : MonoBehaviour
     [SerializeField] Text username;
     [SerializeField] Sprite[] playerIcons;
 
-    [SerializeField] Button loginButton;
-    [SerializeField] InputField usernameInput;
-    [SerializeField] GameObject loginMenu;
 
 
 
@@ -32,10 +31,9 @@ public class MainUIManager : MonoBehaviour
         musicSlider.value = GameStats.musicVolume;
         PersistingScript.Instance.ChangeVolume();
 
-        if (DB_Manager.userExist)
+        if (DB_Manager.LoggedIn)
         {
             SetPlayerData();
-            loginMenu.SetActive(false);
         }
     }
 
@@ -47,8 +45,9 @@ public class MainUIManager : MonoBehaviour
         Sprite curr = EventSystem.current.currentSelectedGameObject.GetComponent<Image>().sprite;
         GameStats.playerIcon = curr;
         playerIcon.sprite = curr;
-        DB_Manager.playerIconIndex = int.Parse(curr.name) - 1;
-        DB_Manager.SavePlayerIcon();
+
+        GameStats.playerIconIndex = int.Parse(curr.name) - 1;
+        PersistingScript.Instance.SavePlayerIcon();
     }
 
 
@@ -77,31 +76,29 @@ public class MainUIManager : MonoBehaviour
     public void SensitivityChange()
     {
         GameStats.sensitivity = sensitivitySlider.value;
+        PersistingScript.Instance.SaveSensitivityandMusicVolume();
     }
 
     public void MusicVolumeChange()
     {
         GameStats.musicVolume = musicSlider.value;
         PersistingScript.Instance.ChangeVolume();
+        PersistingScript.Instance.SaveSensitivityandMusicVolume();
     }
 
 
-    public void IsValidUsername()
-    {
-        loginButton.interactable = (usernameInput.text.Length >= 8 && usernameInput.text.Length <= 15);
-    }
 
     public void Login()
     {
-        DB_Manager.username = PlayerPrefs.GetString(usernameInput.text, null);
-        if (DB_Manager.userExist)
-        {
-            DB_Manager.LoadLoginData();
-        }
-        else
-        {
-            DB_Manager.MakeUser(usernameInput.text);
-        }
+        // DB_Manager.username = PlayerPrefs.GetString(usernameInput.text, null);
+        // if (DB_Manager.userExist)
+        // {
+        //     DB_Manager.LoadLoginData();
+        // }
+        // else
+        // {
+        //     DB_Manager.MakeUser(usernameInput.text);
+        // }
 
         SetPlayerData();
     }
@@ -121,7 +118,20 @@ public class MainUIManager : MonoBehaviour
         playerProfilePerkLevel.text = "Experience Level : " + ((GameStats.maxPerks - 50) / 50).ToString("00");
         playerProfilePerks.text = "Current Perks : " + GameStats.currPerks.ToString("00") + " / " + GameStats.maxPerks.ToString("00");
 
-        usernameInput.DeactivateInputField();
-        usernameInput.text = "";
+        sensitivitySlider.value = GameStats.sensitivity;
+        musicSlider.value = GameStats.musicVolume;
     }
+
+
+    public void Logout()
+    {
+        DB_Manager.LogOut();
+        SceneManager.LoadScene("RegisterScene");
+    }
+
+    public void GoToWebsite()
+    {
+        Application.OpenURL("https://priyanshsingh.crevado.com/");
+    }
+
 }
