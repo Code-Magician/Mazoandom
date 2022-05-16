@@ -53,6 +53,6 @@ public class MainMenu : MonoBehaviour
 
     public void GoToWebsite()
     {
-        Application.OpenURL("https://priyanshsingh.crevado.com/");
+        Application.OpenURL("http://localhost/Project4/game.php");
     }
 }
